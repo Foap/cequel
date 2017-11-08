@@ -353,6 +353,19 @@ module Cequel
     register Bigint.instance
 
     #
+    # `tinyint` columns store 8-bit integer values
+    #
+    # @see https://cassandra.apache.org/doc/latest/cql/types.html
+    #   CQL3 data type documentation
+    #
+    class Tinyint < Int
+      def internal_names
+        ['org.apache.cassandra.db.marshal.ShortType']
+      end
+    end
+    register Tinyint.instance
+
+    #
     # `text` columns store UTF-8 character data. They are also known as
     # `varchar` columns; the names can be used interchangeably. Text columns do
     # not have a length limit
