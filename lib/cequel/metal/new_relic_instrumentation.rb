@@ -13,6 +13,16 @@ module Cequel
     module NewRelicInstrumentation
       extend ActiveSupport::Concern
 
+      # newrelic_rpm 9.19+ required (statement, elapsed); 10.x only (statement) — timing comes from Datastores.wrap.
+      def self.notice_datastore_statement(statement_txt, elapsed)
+        notice = NewRelic::Agent::Datastores.method(:notice_statement)
+        if notice.parameters.any? { |_, name| name == :elapsed }
+          notice.call(statement_txt, elapsed)
+        else
+          notice.call(statement_txt)
+        end
+      end
+
       define_method :execute_with_options_with_newrelic do |statement, options|
 
         operation = nil
@@ -29,7 +39,7 @@ module Cequel
         end
 
         callback = Proc.new do |_result, _scoped_metric, elapsed|
-          NewRelic::Agent::Datastores.notice_statement(statement_txt, elapsed)
+          NewRelicInstrumentation.notice_datastore_statement(statement_txt, elapsed)
         end
 
         table = nil
