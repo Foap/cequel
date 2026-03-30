@@ -28,8 +28,8 @@ module Cequel
           statement_txt = 'BEGIN BATCH'
         end
 
-        callback = Proc.new do |_result, _scoped_metric, _elapsed|
-          NewRelic::Agent::Datastores.notice_statement(statement_txt)
+        callback = Proc.new do |_result, _scoped_metric, elapsed|
+          NewRelic::Agent::Datastores.notice_statement(statement_txt, elapsed)
         end
 
         table = nil
