@@ -282,7 +282,9 @@ module Cequel
     #
     class Decimal < Base
       def cast(value)
-        value.is_a?(BigDecimal) ? value : BigDecimal.new(value, 0)
+        # Kernel#BigDecimal, not BigDecimal.new — the latter was removed in
+        # Ruby 2.7. Same coercion rules, so this is a drop-in.
+        value.is_a?(BigDecimal) ? value : BigDecimal(value, 0)
       end
     end
     register Decimal.instance

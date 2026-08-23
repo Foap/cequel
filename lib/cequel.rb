@@ -1,5 +1,9 @@
 # -*- encoding : utf-8 -*-
 require 'delegate'
+# ActiveSupport 6.x references ::Logger from LoggerThreadSafeLevel but stopped
+# getting it transitively once concurrent-ruby 1.3.5 dropped its own `require
+# 'logger'`. Load it before ActiveSupport so cequel can be required standalone.
+require 'logger'
 
 require 'active_support'
 require 'active_support/deprecation'
