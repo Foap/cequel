@@ -1,5 +1,11 @@
 # -*- encoding : utf-8 -*-
-require 'i18n/core_ext/hash'
+# i18n 1.0 removed i18n/core_ext/hash, which used to be required here for the two Hash
+# helpers `configuration` uses below: deep_symbolize_keys and reverse_merge!. Both are
+# ActiveSupport core_ext, and cequel already depends on activesupport — so require them
+# from the library that still ships them. Rails 6.1 forces i18n >= 1.6, which is where
+# the old require started raising LoadError at boot.
+require 'active_support/core_ext/hash/keys'
+require 'active_support/core_ext/hash/reverse_merge'
 require 'yaml'
 require 'erb'
 
