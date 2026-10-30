@@ -33,7 +33,7 @@ module Cequel
 
       # @return [Cassandra::Statements::Prepared] prepared version of this statement
       def prepare(keyspace)
-        @prepared ||= keyspace.client.prepare(cql)
+        @prepared ||= keyspace.prepare_statement(self)
       end
 
       #

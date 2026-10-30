@@ -63,6 +63,21 @@ describe Cequel::Metal::Keyspace do
       end
     end
 
+    it 'should reconnect when preparing batched statements finds no hosts' do
+      allow(cequel.client)
+        .to receive(:prepare)
+        .and_raise(Cassandra::Errors::NoHostsAvailable)
+        .once
+
+      expect {
+        cequel.batch do
+          cequel[:posts].insert(id: 1, title: 'One')
+          cequel[:posts].insert(id: 2, title: 'Two')
+        end
+      }.not_to raise_error
+      expect(cequel[:posts].to_a.count).to be(2)
+    end
+
     it 'should raise error if consistency specified in individual query in batch' do
       expect {
         cequel.batch(consistency: :one) do
