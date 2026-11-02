@@ -69,6 +69,10 @@ module Cequel
         return super if args.one?
         Module.instance_method(:delegate).bind(self).call(*args, &block)
       end
+      # Keep `delegate :foo, to: :bar` keywords intact on the way to ActiveSupport's
+      # `delegate(*methods, to:, ...)` -- on Ruby 3 a plain *args forward turns them into a
+      # positional hash ("Delegation needs a target").
+      ruby2_keywords(:delegate) if respond_to?(:ruby2_keywords, true)
     end
   end
 end
